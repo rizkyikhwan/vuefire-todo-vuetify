@@ -1,28 +1,83 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <!-- <v-app-bar app color="primary" dark>
+      <div class="d-flex align-center">
+        <h2>Vuefire Todo</h2>
+      </div>
+
+      <v-spacer></v-spacer>
+    </v-app-bar> -->
+
+    <v-main>
+      <transition name="toast">
+        <Toast v-if="showToast" />
+      </transition>
+      <ToDoList @badValue="triggerToast" />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import ToDoList from "./components/ToDoList.vue";
+import Toast from "./components/Toast.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    ToDoList,
+    Toast,
+  },
+
+  data() {
+    return {
+      showToast: false,
+    };
+  },
+  methods: {
+    triggerToast() {
+      this.showToast = true;
+      setTimeout(() => (this.showToast = false), 3000);
+    },
+  },
+};
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.7)),
+    url(./assets/images/bg.png);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  font-family: 'Nunito', sans-serif;
+  overflow: hidden;
+}
+
+.toast-enter-active {
+  animation: wobble 0.5s ease;
+}
+
+.toast-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(-60px);
+}
+
+.toast-leave-active {
+  transition: all 0.3s ease;
+}
+
+@keyframes wobble {
+  0% { transform: translateY(-60px); opacity: 0}
+  50% { transform: translateY(0px); opacity: 1}
+  60% { transform: translateX(8px)}
+  70% { transform: translateX(-8px)}
+  80% { transform: translateX(4px)}
+  90% { transform: translateX(-4px)}
+  100% { transform: translateX(0px)}
 }
 </style>
