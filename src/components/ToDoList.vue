@@ -110,21 +110,24 @@ export default {
   methods: {
     async addItem() {
       if (this.newTask) {
-        document.querySelector("input").disabled = true
-        document.querySelector("button").disabled = true
+        document.querySelector("input").disabled = true;
+        document.querySelector("button").disabled = true;
         setTimeout(() => {
           document.querySelector("input").disabled = false
-          document.querySelector("button").disabled = false
-        }, 1000)
-        const timestamp = await Date.now();
-        await db
-          .collection("tasks")
-          .doc()
-          .set({ text: this.newTask, date: timestamp })
-          .catch((error) => {
-            console.error("Error adding document: ", error);
-          });
-        this.newTask = null;
+          document.addEventListener("DOMContentLoaded", () => {
+            document.querySelector("button").disabled = false
+          })
+        }, 1000);
+        await setTimeout(() => {
+          const timestamp = Date.now();
+          db.collection("tasks")
+            .doc()
+            .set({ text: this.newTask, date: timestamp })
+            .catch((error) => {
+              console.error("Error adding document: ", error);
+            });
+          this.newTask = "";
+        }, 500);
       } else {
         this.$emit("badValue");
       }
