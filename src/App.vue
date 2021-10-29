@@ -1,13 +1,5 @@
 <template>
   <v-app>
-    <!-- <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <h2>Vuefire Todo</h2>
-      </div>
-
-      <v-spacer></v-spacer>
-    </v-app-bar> -->
-
     <v-main>
       <transition name="toast">
         <Toast v-if="showToast" />

@@ -52,49 +52,45 @@
 
     <v-slide-y-transition mode="out-in" appear>
       <v-card v-if="tasks.length > 0">
-        <v-slide-y-transition class="py-0" group appear>
-          <template v-for="(task, i) in tasks">
-            <v-divider v-if="i !== 0" :key="`${i}-divider`"></v-divider>
+        <template v-for="(task, i) in tasks">
+          <v-divider v-if="i !== 0" :key="`${i}-divider`"></v-divider>
 
-            <v-list-item :key="`${i}-${task.text}`">
-              <v-list-item-action>
-                <v-checkbox
-                  v-model="task.done"
-                  :color="(task.done && 'success') || 'primary'"
-                >
-                  <template v-slot:label>
-                    <div
-                      :class="(task.done && 'success--text')"
-                      class="ml-4"
-                    >{{ task.text }}</div>
-                  </template>
-                </v-checkbox>
-              </v-list-item-action>
+          <v-list-item :key="`${i}-${task.text}`">
+            <v-list-item-action>
+              <v-checkbox
+                v-model="task.done"
+                :color="(task.done && 'success') || 'primary'"
+              >
+                <template v-slot:label>
+                  <div :class="task.done && 'success--text'" class="ml-4">
+                    {{ task.text }}
+                  </div>
+                </template>
+              </v-checkbox>
+            </v-list-item-action>
 
-              <v-spacer></v-spacer>
+            <v-spacer></v-spacer>
 
-              <v-scroll-x-reverse-transition>
-                <v-icon v-if="task.done" color="success"> mdi-check </v-icon>
-              </v-scroll-x-reverse-transition>
+            <v-scroll-x-reverse-transition>
+              <v-icon v-if="task.done" color="success"> mdi-check </v-icon>
+            </v-scroll-x-reverse-transition>
 
-              <v-fade-transition>
-                <v-btn
-                  v-if="task.done"
-                  icon
-                  color="red"
-                  @click="deleteTodo(task.id)"
-                >
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </v-fade-transition>
-            </v-list-item>
-          </template>
-        </v-slide-y-transition>
+            <v-fade-transition>
+              <v-btn
+                v-if="task.done"
+                icon
+                color="red"
+                @click="deleteTodo(task.id)"
+              >
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </v-fade-transition>
+          </v-list-item>
+        </template>
       </v-card>
       <v-card v-else>
         <v-card-text>
-          <div style="text-align: center">Woohoo, nothing left todo!
-              </div>
+          <div style="text-align: center">Woohoo, nothing left todo!</div>
         </v-card-text>
       </v-card>
     </v-slide-y-transition>
@@ -114,12 +110,17 @@ export default {
   methods: {
     async addItem() {
       if (this.newTask) {
+        document.querySelector("input").disabled = true
+        document.querySelector("button").disabled = true
+        setTimeout(() => {
+          document.querySelector("input").disabled = false
+          document.querySelector("button").disabled = false
+        }, 1000)
+        const timestamp = await Date.now();
         await db
           .collection("tasks")
-          .add({ text: this.newTask })
-          .then((docRef) => {
-            console.log("Document written with ID : ", docRef.id);
-          })
+          .doc()
+          .set({ text: this.newTask, date: timestamp })
           .catch((error) => {
             console.error("Error adding document: ", error);
           });
@@ -144,7 +145,7 @@ export default {
     },
   },
   firestore: {
-    tasks: db.collection("tasks"),
+    tasks: db.collection("tasks").orderBy("date"),
   },
 };
 </script>
